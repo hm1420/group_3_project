@@ -23,6 +23,13 @@ class tictactoe:  # Main Class
 
     def winner(self, player):
         # Only after 5 moves, there can be 3 pieces of the same kind
+        nr=0
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j]=='-':
+                    nr+=1
+        if nr<5:
+            return False
         # Checking on rows
         for i in range(3):
             ok = 1
@@ -79,9 +86,49 @@ class tictactoe:  # Main Class
                 free=False
                 return row-1, col-1
                 break
-            
-                   
-
+    
+    def strategy1(self):
+        #checking for rows and columns which have 2 same pieces
+        #so that the next move will be in the 3rd free space (for both players)
+        #checking rows
+        for i in range(3):
+            if self.board[i][0]== self.board[i][1] and self.board[i][2]=='-':
+                return i, 2
+            else:
+                if self.board[i][0]==self.board[i][2] and self.board[i][1]=='-':
+                    return i, 1
+                else:
+                    if self.board[i][1]==self.board[i][2] and self.board[i][0]=='-':
+                        return i, 0
+                    
+        #checking for columns
+        for i in range(3):
+            if self.board[0][i]== self.board[1][i] and self.board[2][i]=='-':
+                return 2,i
+            else:
+                if self.board[0][i]==self.board[2][i] and self.board[1][i]=='-':
+                    return 1, i
+                else:
+                    if self.board[1][i]==self.board[2][i] and self.board[0][i]=='-':
+                        return 0,i
+        #checking for diagonals
+        if self.board[0][0]==self.board[1][1] and self.board[2][2]=='-':
+            return 2,2
+        else:
+            if self.board[0][0]==self.board[2][2] and self.board[1][1]=='-':
+                return 1,1
+            else:
+                if self.board[1][1]==self.board[2][2] and self.board[0][0]=='-':
+                    return 0,0
+        if self.board[0][2]==self.board[1][1] and self.board[2][0]=='-':
+            return 2,0
+        else:
+            if self.board[0][2]==self.board[0][2] and self.board[1][1]=='-':
+                return 1,1
+            else:
+                if self.board[1][1]==self.board[2][0] and self.board[0][2]=='-':
+                    return 0,2
+        return False
     def startgame(self):  # Call other functions in here to run the game.
         self.setBoard()
         print(self.board)
@@ -92,9 +139,9 @@ class tictactoe:  # Main Class
 
 
             # Random move from the computer adding a piece to the board
-            row = random.randint(1, 3)
-            col = random.randint(1, 3)
-            i, j= self.free_space()
+            if self.strategy1()==False:
+                i, j= self.free_space()
+            else: i,j= self.strategy1()
 
             self.placement(i, j, computer)
             self.showBoard()
@@ -112,7 +159,7 @@ class tictactoe:  # Main Class
             # Change players
             computer = self.swap_player_turn(computer)
 
-        print(row, col)
+        #print(row, col)
 
         print()
         self.showBoard()
