@@ -11,10 +11,7 @@ class tictactoe:  # Main Class
 
     def setBoard(self):  # Sets the 3 rows into a 2-D array
         for x in range(3):
-            row = []
-            for i in range(3):
-                row.append('-')
-            self.board.append(row)
+            self.board.append(['-', '-', '-'])
 
     def firstTurn(self):  # Determines the 1st turn being either 'X' or 'O'
         first = random.randint(0, 1)
