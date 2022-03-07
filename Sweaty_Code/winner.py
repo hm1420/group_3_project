@@ -90,7 +90,6 @@ class tictactoe:  # Main Class
         while True:
             print(computer, "turn")
 
-            
 
             # Random move from the computer adding a piece to the board
             row = random.randint(1, 3)
