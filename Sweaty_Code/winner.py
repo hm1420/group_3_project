@@ -89,8 +89,7 @@ class tictactoe:  # Main Class
             # Random move from the computer adding a piece to the board
             row = random.randint(1, 3)
             col = random.randint(1, 3)
-            self.board[row-1][col-1] = 1  # X==1 and O==-1
-
+            
             self.placement(row - 1, col - 1, computer)
 
             # Check if the current player wins
