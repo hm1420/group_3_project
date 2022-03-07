@@ -82,7 +82,7 @@ class tictactoe:  # Main Class
 
         computer = 'X' if self.firstTurn() == 1 else 'O'
         while True:
-            print("{computer} turn")
+            print(computer, "turn")
 
             self.showBoard()
 
@@ -95,7 +95,7 @@ class tictactoe:  # Main Class
 
             # Check if the current player wins
             if self.winner(computer):
-                print("Player {computer} wins the game!")
+                print("Player",computer, "wins the game!")
                 break
 
             # Check if the board is full
