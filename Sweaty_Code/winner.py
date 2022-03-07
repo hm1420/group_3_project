@@ -54,12 +54,6 @@ class tictactoe:  # Main Class
             return True
         return False
 
-        for row in self.board:
-            for item in row:
-                if item == '-':
-                    return False
-        return True
-
     def is_board_filled(self):
         for row in self.board:
             for item in row:
@@ -89,12 +83,12 @@ class tictactoe:  # Main Class
             # Random move from the computer adding a piece to the board
             row = random.randint(1, 3)
             col = random.randint(1, 3)
-            
+
             self.placement(row - 1, col - 1, computer)
 
             # Check if the current player wins
             if self.winner(computer):
-                print("Player",computer, "wins the game!")
+                print("Player", computer, "wins the game!")
                 break
 
             # Check if the board is full
