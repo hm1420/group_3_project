@@ -41,6 +41,7 @@ class tictactoe:  # Main Class
                 if self.board[j][i] != player:
                     ok = 0
                     break
+
         # Checking the diagonals
         for i in range(3):
             ok = 1
@@ -94,10 +95,12 @@ class tictactoe:  # Main Class
             self.board[row-1][col-1] = 1  # X==1 and O==-1
 
             self.placement(row - 1, col - 1, computer)
+
             # Check if the current player wins
             if self.winner(computer):
                 print("Player {computer} wins the game!")
                 break
+
             # Check if the board is full
             if self.is_board_filled():
                 print("Draw match!")
