@@ -78,6 +78,7 @@ class tictactoe:  # Main Class
             print()
             
     def free_space(self):
+        #this strategy is choosing the move in a random way
         free=True
         while free==True:
             row = random.randint(1, 3)
@@ -129,6 +130,8 @@ class tictactoe:  # Main Class
                 if self.board[1][1]==self.board[2][0] and self.board[0][2]=='-':
                     return 0,2
         return False
+    
+    
     def startgame(self):  # Call other functions in here to run the game.
         self.setBoard()
         print(self.board)
@@ -136,13 +139,16 @@ class tictactoe:  # Main Class
         computer = 'X' if self.firstTurn() == 1 else 'O'
         while True:
             print(computer, "turn")
-
-
-            # Random move from the computer adding a piece to the board
-            if self.strategy1()==False:
-                i, j= self.free_space()
+            
+            #X has strategy X
+            if computer=='X':
+            
+                if self.strategy1()==False:
+                    i, j= self.free_space()
+                else:
+                    i,j= self.strategy1()
             else:
-                i,j= self.strategy1()
+                i, j= self.free_space()
 
             self.placement(i, j, computer)
             self.showBoard()
@@ -150,6 +156,7 @@ class tictactoe:  # Main Class
             # Check if the current player wins
             if self.winner(computer):
                 print("Player", computer, "wins the game!")
+                return computer
                 break
 
             # Check if the board is full
@@ -163,6 +170,7 @@ class tictactoe:  # Main Class
         #print(row, col)
 
         print()
+        
         self.showBoard()
 
 
@@ -171,6 +179,37 @@ t.startgame()
 
 #next task: make x play with random startegy and O with strategy1 and plot the sample of wins
 #for 100 games
+a=np.zeros(100)
+b=np.zeros(100)
+winsX=0
+winsO=0
+
+t = tictactoe()
+computer=t.startgame()
+
+if t== computer:
+        if computer=='X':
+            a[0]=1
+            winsX=1
+        else:
+            b[0]=1
+            winsO=1
+
+for i in range(1,100):
+    t = tictactoe()
+    computer=t.startgame()
+    if computer:
+        if computer=='X':
+            winsX+=1
+        else:
+            winsO+=1
+    a[i]=winsX
+    b[i]=winsO
+
+from matplotlib import pyplot as plt
+plt.plot(range(100), a, label='X wins')
+plt.plot(range(100), b, label='O wins')
+plt.legend()
 
  
 
