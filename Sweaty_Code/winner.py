@@ -151,28 +151,32 @@ class tictactoe:  # Main Class
         self.__init__() # added this so you can continually initiate game
         self.setBoard()
         print(self.board)
+        
+        count=0
 
         computer = 'X' if self.firstTurn() == 1 else 'O'
         while True:
+            #we can see the board without the last piece added
             print(computer, "turn")
+            
+            count+=1
+            self.showBoard()
             if computer == 'X':
                 i, j = self.take_turn(self.strategyX)
             else:
                 i, j = self.take_turn(self.strategyO)
             self.placement(i, j, computer)
-            self.showBoard()
+            
 
-            # You can add this check only if number of turns is greater than 5 here (add a counter)
+            if count>4:
             # Check if the current player wins
-            if self.winner(computer):
-                print("Player", computer, "wins the game!")
-                return computer
-                break
-            
-            
-            # if you have a counter here you don't need to check the board is full but break after 9 turns
-            # Check if the board is full
-            if self.is_board_filled():
+                if self.winner(computer):
+                    print("Player", computer, "wins the game!")
+                    return computer
+                    break
+                
+            #draw is obtained if the board is full and no player has won
+            if count==9:
                 print("Draw match!")
                 break
 
