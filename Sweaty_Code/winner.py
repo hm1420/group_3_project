@@ -36,8 +36,12 @@ class tictactoe:  # Main Class
             ok = 1
             for j in range(3):
                 if self.board[i][j] != player:
+                    
                     ok = 0
                     break
+            if ok==1:
+                
+                return True
 
         # Checking on columns
         for i in range(3):
@@ -46,6 +50,9 @@ class tictactoe:  # Main Class
                 if self.board[j][i] != player:
                     ok = 0
                     break
+            if ok==1:
+                return True
+                    
 
         # Checking the diagonals
         for i in range(3):
@@ -146,30 +153,26 @@ class tictactoe:  # Main Class
         print(self.board)
 
         computer = 'X' if self.firstTurn() == 1 else 'O'
-        #count how may turns have been
-        count=0 
         while True:
-            count+=1
             print(computer, "turn")
             if computer == 'X':
                 i, j = self.take_turn(self.strategyX)
             else:
                 i, j = self.take_turn(self.strategyO)
-                
             self.placement(i, j, computer)
             self.showBoard()
 
             # You can add this check only if number of turns is greater than 5 here (add a counter)
             # Check if the current player wins
             if self.winner(computer):
-                    print("Player", computer, "wins the game!")
-                    return computer
-                    break
+                print("Player", computer, "wins the game!")
+                return computer
+                break
             
-            # Check if the board is full and there has been no winner so far
-            #then it is automatically a draw
             
-            if count==9:
+            # if you have a counter here you don't need to check the board is full but break after 9 turns
+            # Check if the board is full
+            if self.is_board_filled():
                 print("Draw match!")
                 break
 
@@ -179,7 +182,6 @@ class tictactoe:  # Main Class
         print()
         
         self.showBoard()
-
-
+ 
 t = tictactoe()
 t.startgame()
