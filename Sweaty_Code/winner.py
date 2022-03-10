@@ -5,9 +5,10 @@ import random  # noqa F401
 
 
 class tictactoe:  # Main Class
-
-    def __init__(self):  # Initialises new array for board
+    def __init__(self, strategyX = 'random', strategyO = 'random'):  # Initialises new array for board
         self.board = []
+        self.strategyX = strategyX
+        self.strategyO = strategyO
 
     def setBoard(self):  # Sets the 3 rows into a 2-D array
         for x in range(3):
@@ -78,6 +79,7 @@ class tictactoe:  # Main Class
             print()
             
     def free_space(self):
+        #this strategy is choosing the move in a random way
         free=True
         while free==True:
             row = random.randint(1, 3)
@@ -129,49 +131,55 @@ class tictactoe:  # Main Class
                 if self.board[1][1]==self.board[2][0] and self.board[0][2]=='-':
                     return 0,2
         return False
+    
+    def take_turn(self, strategy):
+        if strategy == 'random':
+            return self.free_space()
+        elif strategy == 'smart':
+            return self.strategy1()
+        else:
+            return self.free_space()
+
     def startgame(self):  # Call other functions in here to run the game.
+        self.__init__() # added this so you can continually initiate game
         self.setBoard()
         print(self.board)
 
         computer = 'X' if self.firstTurn() == 1 else 'O'
+        #count how may turns have been
+        count=0 
         while True:
+            count+=1
             print(computer, "turn")
-
-
-            # Random move from the computer adding a piece to the board
-            if self.strategy1()==False:
-                i, j= self.free_space()
+            if computer == 'X':
+                i, j = self.take_turn(self.strategyX)
             else:
-                i,j= self.strategy1()
-
+                i, j = self.take_turn(self.strategyO)
+                
             self.placement(i, j, computer)
             self.showBoard()
 
+            # You can add this check only if number of turns is greater than 5 here (add a counter)
             # Check if the current player wins
             if self.winner(computer):
-                print("Player", computer, "wins the game!")
-                break
-
-            # Check if the board is full
-            if self.is_board_filled():
+                    print("Player", computer, "wins the game!")
+                    return computer
+                    break
+            
+            # Check if the board is full and there has been no winner so far
+            #then it is automatically a draw
+            
+            if count==9:
                 print("Draw match!")
                 break
 
             # Change players
             computer = self.swap_player_turn(computer)
 
-        #print(row, col)
-
         print()
+        
         self.showBoard()
 
 
 t = tictactoe()
 t.startgame()
-
-#next task: make x play with random startegy and O with strategy1 and plot the sample of wins
-#for 100 games
-
- 
-
-       
