@@ -36,8 +36,12 @@ class tictactoe:  # Main Class
             ok = 1
             for j in range(3):
                 if self.board[i][j] != player:
+                    
                     ok = 0
                     break
+            if ok==1:
+                
+                return True
 
         # Checking on columns
         for i in range(3):
@@ -46,6 +50,9 @@ class tictactoe:  # Main Class
                 if self.board[j][i] != player:
                     ok = 0
                     break
+            if ok==1:
+                return True
+                    
 
         # Checking the diagonals
         for i in range(3):
@@ -61,6 +68,7 @@ class tictactoe:  # Main Class
         if ok == 1:
             return True
         return False
+
 
     def is_board_filled(self):
         for row in self.board:
