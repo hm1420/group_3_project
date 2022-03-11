@@ -60,6 +60,8 @@ class tictactoe:  # Main Class
             if self.board[i][i] != player:
                 ok = 0
                 break
+        if ok==1:
+            return True
         for i in range(3):
             ok = 1
             if self.board[i][2-i] != player:
