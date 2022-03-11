@@ -65,6 +65,8 @@ class tictactoe:  # Main Class
             if self.board[i][2-i] != player:
                 ok = 0
                 break
+        if ok==1:
+            return True
         if ok == 1:
             return True
         return False
@@ -160,13 +162,13 @@ class tictactoe:  # Main Class
             print(computer, "turn")
             
             count+=1
-            self.showBoard()
+            self.showBoard()  
+            
             if computer == 'X':
                 i, j = self.take_turn(self.strategyX)
             else:
                 i, j = self.take_turn(self.strategyO)
             self.placement(i, j, computer)
-            
 
             if count>4:
             # Check if the current player wins
