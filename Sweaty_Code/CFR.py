@@ -55,7 +55,7 @@ class Node:
 
     def get_action(self):
 
-        # GET RABDIN ACTION ACCORDING TO MIXED-STRATEGY DISTRIBUTION
+        # GET RANDOM ACTION ACCORDING TO MIXED-STRATEGY DISTRIBUTION
 
         # Basically, we are using the alternative board coordinate system from
         # our get_avaiable_actions method. We create an array from 0 to 8
