@@ -5,10 +5,8 @@ import random  # noqa F401
 
 
 class tictactoe:  # Main Class
-    def __init__(self, strategyX = 'random', strategyO = 'random'):  # Initialises new array for board
+    def __init__(self):  # Initialises new array for board
         self.board = []
-        self.strategyX = strategyX
-        self.strategyO = strategyO
 
     def setBoard(self):  # Sets the 3 rows into a 2-D array
         for x in range(3):
@@ -279,38 +277,50 @@ class tictactoe:  # Main Class
         
     
     def take_turn(self, strategy):
-        if strategy == 'random':
+        if strategy == 1:               #'random':
             return self.free_space()
-        elif strategy == 'smart':
+        elif strategy == 2:             # == 'smart_2':
             return self.strategy1()
+        elif strategy == 3:             # == 'smart_3':
+            return self.free_space()
         else:
+            print ('No strategy chosen defaulting to random')
             return self.free_space()
 
-    def startgame(self, strategyIndexX,strategyIndexO ):  # Call other functions in here to run the game.
+    def startgame(self, strategyIndexX, strategyIndexO ):  # Call other functions in here to run the game.
         self.__init__() # added this so you can continually initiate game
+
         self.setBoard()
         print(self.board)
-        count=0
 
-        computer = 'X' if self.firstTurn() == 1 else 'O'
+        count=0
+        computer = 'X' if self.firstTurn() == 1 else 'O' # randomly get first player
         while True:
-            print(computer, "turn")
-            count+=1
+            print (computer, "turn")
+            count += 1
             if computer == 'X':
-                if strategyIndexX == 1:
-                    i, j = self.take_turn(self.free_space())
-                elif strategyIndexX==2:
-                    i, j = self.take_turn(self.strategy1())
-                else: 
-                    i,j= self.take_turn(self.strategy2('X'))
+                i, j = self.take_turn(strategyIndexX)
             else:
-                if strategyIndexO == 1:
-                    i, j = self.take_turn(self.free_space())
-                elif strategyIndexO==2:
-                    i, j = self.take_turn(self.strategy1())
-                else: 
-                    i,j= self.take_turn(self.strategy2('X'))
+                i, j = self.take_turn(strategyIndexO)
             self.placement(i, j, computer)
+        # while True:
+        #     print(computer, "turn")
+        #     count+=1
+        #     if computer == 'X':
+        #         if strategyIndexX == 1:
+        #             i, j = self.take_turn(self.free_space())
+        #         elif strategyIndexX==2:
+        #             i, j = self.take_turn(self.strategy1())
+        #         else: 
+        #             i,j= self.take_turn(self.strategy2('X'))
+        #     else:
+        #         if strategyIndexO == 1:
+        #             i, j = self.take_turn(self.free_space())
+        #         elif strategyIndexO==2:
+        #             i, j = self.take_turn(self.strategy1())
+        #         else: 
+        #             i,j= self.take_turn(self.strategy2('X'))
+        #     self.placement(i, j, computer)
             
             self.showBoard()
 
@@ -351,7 +361,10 @@ winsO=0
 
 t = tictactoe()
 for i in range(1,N):
-    computer=t.startgame(3,1)
+    # 3 = 'smart_2'
+    # 2 = 'smart_1'
+    # 1 = 'random'
+    computer=t.startgame(3,1) # first position fives strategy of X, second position gives strategy of O
     if computer:
         if computer=='X':
             winsX+=1
