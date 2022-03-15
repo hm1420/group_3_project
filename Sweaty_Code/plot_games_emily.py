@@ -351,6 +351,13 @@ for i in range(1,N):
     b[i]=winsO
 
 from matplotlib import pyplot as plt
+import matplotlib as mpl
+mpl.rcParams['axes.spines.right'] = False
+mpl.rcParams['axes.spines.top'] = False
+    
 plt.plot(range(N), a, label='X wins')
 plt.plot(range(N), b, label='O wins')
+plt.xlabel('Number of wins')
+plt.ylabel('Number of games played')
+plt.title('X-smart strategy, O- random strategy')
 plt.legend()
