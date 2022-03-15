@@ -286,7 +286,7 @@ class tictactoe:  # Main Class
         else:
             return self.free_space()
 
-    def startgame(self):  # Call other functions in here to run the game.
+    def startgame(self, strategyIndexX,strategyIndexO ):  # Call other functions in here to run the game.
         self.__init__() # added this so you can continually initiate game
         self.setBoard()
         print(self.board)
@@ -297,9 +297,19 @@ class tictactoe:  # Main Class
             print(computer, "turn")
             count+=1
             if computer == 'X':
-                i, j = self.take_turn(self.strategy2(computer))
+                if strategyIndexX == 1:
+                    i, j = self.take_turn(self.free_space())
+                elif strategyIndexX==2:
+                    i, j = self.take_turn(self.strategy1())
+                else: 
+                    i,j= self.take_turn(self.strategy2('X'))
             else:
-                i, j = self.take_turn(self.free_space())
+                if strategyIndexO == 1:
+                    i, j = self.take_turn(self.free_space())
+                elif strategyIndexO==2:
+                    i, j = self.take_turn(self.strategy1())
+                else: 
+                    i,j= self.take_turn(self.strategy2('X'))
             self.placement(i, j, computer)
             
             self.showBoard()
@@ -327,7 +337,7 @@ class tictactoe:  # Main Class
 
 
 t = tictactoe()
-t.startgame()
+t.startgame(3,1)
 
 #next task: make an even better strategy, even closer to how a human in playing
 
@@ -341,7 +351,7 @@ winsO=0
 
 t = tictactoe()
 for i in range(1,N):
-    computer=t.startgame()
+    computer=t.startgame(3,1)
     if computer:
         if computer=='X':
             winsX+=1
