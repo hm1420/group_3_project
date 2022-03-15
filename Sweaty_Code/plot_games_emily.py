@@ -142,6 +142,142 @@ class tictactoe:  # Main Class
                     return 0,2
         return False
     
+    def strategy2(self, player):
+        #first move should be in a corner and the second one should be on a line
+        #that has the first piece on (blocking a line for the first player)
+        
+        #computing a counter (as we can't use the one in the startgame function)
+        counter=9
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j]=='-':
+                    counter-=1
+        #choosing first move to be in a corner
+        if counter==0:
+            row = random.randint(0,1)
+            col = random.randint(0,1)
+            if row==1:
+                row=2
+            if col==1:
+                col=2
+            return row, col
+        elif counter==1:
+            for i in range(3):
+                for j in range(3):
+                    if self.board[i][j]!='-':
+                        break
+            
+            while True:
+                row = random.randint(0, 2)
+                col = random.randint(0, 2)
+                if row== i or col==j:
+                    return row, col
+                elif i==j and row==col:
+                    return row, col
+                elif i+j==2 and row+col==2:
+                    return row, col
+        
+        #checking for rows and columns which have 2 same pieces
+        #so that the next move will be in the 3rd free space (for both players)
+        #prefers to occupy a spot that wins rather one that stops the opponent from winning
+        #checking rows
+        a=-1
+        b=-1
+        for i in range(3):
+            if self.board[i][0]== self.board[i][1] and self.board[i][2]=='-':
+                if self.board[i][0]==player:
+                    return i, 2
+                else:
+                    a=i
+                    b=2
+            else:
+                if self.board[i][0]==self.board[i][2] and self.board[i][1]=='-':
+                    if self.board[i][0]== player:
+                        return i, 1
+                    else:
+                        a=i
+                        b=1
+                else:
+                    if self.board[i][1]==self.board[i][2] and self.board[i][0]=='-':
+                        if self.board[i][1]==player:
+                            return i, 0
+                        else:
+                            a=i
+                            b=0
+                    
+        #checking for columns
+        for i in range(3):
+            if self.board[0][i]== self.board[1][i] and self.board[2][i]=='-':
+                if self.board[0][i]==player:
+                    return 2,i
+                else:
+                    a=2
+                    b=i
+            else:
+                if self.board[0][i]==self.board[2][i] and self.board[1][i]=='-':
+                    if self.board[0][i]==player:
+                        return 1,i
+                    else:
+                        a=1
+                        b=i
+                else:
+                    if self.board[1][i]==self.board[2][i] and self.board[0][i]=='-':
+                        if self.board[1][i]==player:
+                            return 0,i
+                        else:
+                            a=0
+                            b=i
+        #checking for diagonals
+        if self.board[0][0]==self.board[1][1] and self.board[2][2]=='-':
+            if self.board[0][0]==player:
+                return 2,2
+            else:
+                a=2
+                b=2
+        else:
+            if self.board[0][0]==self.board[2][2] and self.board[1][1]=='-':
+                if self.board[0][0]==player:
+                    return 1,1
+                else:
+                    a=1
+                    b=1
+            else:
+                if self.board[1][1]==self.board[2][2] and self.board[0][0]=='-':
+                    if self.board[1][1]==player:
+                        return 0,0
+                    else:
+                        a=0
+                        b=0
+        if self.board[0][2]==self.board[1][1] and self.board[2][0]=='-':
+            if self.board[0][2]==player:
+                return 2,0
+            else:
+                a=2
+                b=0
+        else:
+            if self.board[0][2]==self.board[0][2] and self.board[1][1]=='-':
+                if self.board[0][2]==player:
+                    return 1,1
+                else:
+                    a=1
+                    b=1
+            else:
+                if self.board[1][1]==self.board[2][0] and self.board[0][2]=='-':
+                    if self.board[1][1]==player:
+                        return 0,2
+                    else:
+                        a=0
+                        b=2
+        
+        if a>=0 and b>=0:
+            return a, b
+        return False
+    
+            
+                
+        
+        
+    
     def take_turn(self, strategy):
         if strategy == 'random':
             return self.free_space()
@@ -161,7 +297,7 @@ class tictactoe:  # Main Class
             print(computer, "turn")
             count+=1
             if computer == 'X':
-                i, j = self.take_turn(self.strategy1())
+                i, j = self.take_turn(self.strategy2(computer))
             else:
                 i, j = self.take_turn(self.free_space())
             self.placement(i, j, computer)
@@ -192,6 +328,8 @@ class tictactoe:  # Main Class
 
 t = tictactoe()
 t.startgame()
+
+#next task: make an even better strategy, even closer to how a human in playing
 
 #next task: make x play with random startegy and O with strategy1 and plot the sample of wins
 
