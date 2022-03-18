@@ -7,13 +7,13 @@ import random  # noqa F401
 class tictactoe:  # Main Class
     def __init__(self):  # Initialises new array for board
         self.board = []
+        self.players = {-1:'O', 1:'X'}
 
     def setBoard(self):  # Sets the 3 rows into a 2-D array
-        for x in range(3):
-            self.board.append(['-', '-', '-'])
+        self.board = np.tile(0, (3,3))
 
     def firstTurn(self):  # Determines the 1st turn being either 'X' or 'O'
-        first = random.randint(0, 1)
+        first = np.random.choice([-1, 1])
         return first
 
     def placement(self, row, col, computer):
@@ -21,125 +21,96 @@ class tictactoe:  # Main Class
         self.board[row][col] = computer
 
     def winner(self, player):
-        # Only after 5 moves, there can be 3 pieces of the same kind
-        nr=0
-        for i in range(3):
-            for j in range(3):
-                if self.board[i][j]=='-':
-                    nr+=1
-        if nr>5:
-            return False
-        # Checking on rows
-        for i in range(3):
-            ok = 1
-            for j in range(3):
-                if self.board[i][j] != player:
-                    
-                    ok = 0
-                    break
-            if ok==1:
-                
-                return True
-
-        # Checking on columns
-        for i in range(3):
-            ok = 1
-            for j in range(3):
-                if self.board[j][i] != player:
-                    ok = 0
-                    break
-            if ok==1:
-                return True
-                    
-
-        # Checking the diagonals
-        for i in range(3):
-            ok = 1
-            if self.board[i][i] != player:
-                ok = 0
-                break
-        if ok==1:
+        # checking on row
+        if player*3 in np.sum(self.board, axis=0):
             return True
-        for i in range(3):
-            ok = 1
-            if self.board[i][2-i] != player:
-                ok = 0
-                break
-        if ok == 1:
-            return True
-        return False
 
+        # # Checking on columns
+        if player*3 in np.sum(self.board, axis=1):
+            return True
+        # Checking the diagonal1
+        if player*3 == np.trace(self.board):
+            return True
+        # checking the diagonal 2
+        if player*3 == np.trace(np.rot90(self.board)):
+            return True
 
     def is_board_filled(self):
-        for row in self.board:
-            for item in row:
-                if item == '-':
-                    return False
-        return True
+        if np.where(self.board == 0)[0].shape == 0:
+            # no more spaces
+            return True
+        elif np.where(self.board == 0)[0].shape != 0:
+            # there are more spaces
+            return False
+
+##########################################################################################
 
     def swap_player_turn(self, player):
-        return 'X' if player == 'O' else 'O'
+        return player*-1
 
     def showBoard(self):  # Visual display for board when called
+        # convert matrix to 'X' and 'O'
+        pieces = {1:'X', -1:'O', 0: '-'}
         for row in self.board:
             for item in row:
-                print(item, end=" ")
+                print(pieces[item],  end=" ")
             print()
             
     def free_space(self):
-        #this strategy is choosing the move in a random way
+        # this strategy is choosing the move in a random way
         free=True
         while free==True:
             row = random.randint(0, 2)
-            
             col = random.randint(0, 2)
-            if self.board[row][col]=='-':
+            if self.board[row][col]==0:
                 free=False
                 return row, col
                 break
     
-    def strategy1(self):
+    def strategy1(self, player):
         #checking for rows and columns which have 2 same pieces
-        #so that the next move will be in the 3rd free space (for both players)
-        #checking rows
-        for i in range(3):
-            if self.board[i][0]== self.board[i][1] and self.board[i][2]=='-':
-                return i, 2
+        #so that the next move will be in the 3rd free space (for either player)
+
+        # checking on columns
+        if player*2 in np.sum(self.board, axis=0):
+            # get column(s) with 2 
+            row_idy = np.argwhere(np.sum(self.board, axis=0) == player*2 ).squeeze()
+            # sample column in the case there is more than 2
+            idy = int([np.random.choice(row_idy) if row_idy.shape != () else row_idy][0])
+            # get the row axis
+            idx = np.argwhere(self.board[:,idy] == 0)[0][0]
+            return idx, idy
+
+        # checking on rows
+        if player*2 in np.sum(self.board, axis=1):
+            # get row(s) with 2
+            row_idx = np.argwhere(np.sum(self.board, axis=1) == player*2).squeeze()
+            # sample row in the case there is more than 2
+            idx = int([np.random.choice(row_idx) if row_idx.shape != () else row_idx][0])
+            # add the final piece for winning move
+            idy = np.argwhere(self.board[idx,:] == 0)[0][0]
+            return idx, idy
+
+        # checking on diagonal1
+        if player*2 == np.trace(self.board):
+            # get diagonal(s) with 2
+            if self.board[0][0] == 0:
+                idx, idy = 0, 0
             else:
-                if self.board[i][0]==self.board[i][2] and self.board[i][1]=='-':
-                    return i, 1
-                else:
-                    if self.board[i][1]==self.board[i][2] and self.board[i][0]=='-':
-                        return i, 0
-                    
-        #checking for columns
-        for i in range(3):
-            if self.board[0][i]== self.board[1][i] and self.board[2][i]=='-':
-                return 2,i
+                idx, idy = 2, 2
+            return idx, idy
+
+        # checking on diagonal2
+        if player*2 == np.trace(np.rot90(self.board)):
+            # get diagonal(s) with 2
+            if self.board[0][2] == 0:
+                idx, idy = 0, 2
             else:
-                if self.board[0][i]==self.board[2][i] and self.board[1][i]=='-':
-                    return 1, i
-                else:
-                    if self.board[1][i]==self.board[2][i] and self.board[0][i]=='-':
-                        return 0,i
-        #checking for diagonals
-        if self.board[0][0]==self.board[1][1] and self.board[2][2]=='-':
-            return 2,2
-        else:
-            if self.board[0][0]==self.board[2][2] and self.board[1][1]=='-':
-                return 1,1
-            else:
-                if self.board[1][1]==self.board[2][2] and self.board[0][0]=='-':
-                    return 0,0
-        if self.board[0][2]==self.board[1][1] and self.board[2][0]=='-':
-            return 2,0
-        else:
-            if self.board[0][2]==self.board[0][2] and self.board[1][1]=='-':
-                return 1,1
-            else:
-                if self.board[1][1]==self.board[2][0] and self.board[0][2]=='-':
-                    return 0,2
-        return -1, -1
+                idx, idy = 2, 0
+            return idx, idy
+
+        idx, idy = self.free_space()
+        return idx, idy
     
     def strategy2(self, player):
         #first move should be in a corner and the second one should be on a line
@@ -273,19 +244,12 @@ class tictactoe:  # Main Class
         return -1, -1
     
             
-                
-        
-        
-    
     def take_turn(self, strategy, computer):
-        if strategy == 1:               #'random':
-            print("random")
+        if strategy == 'random':               
             return self.free_space()
-        elif strategy == 2:     # == 'smart_2':
-            print("medium")
-            return self.strategy1()
-        elif strategy == 3:             # == 'smart_3':
-            print("smart")
+        elif strategy == 'smart1':             
+            return self.strategy1(computer)
+        elif strategy == 'smart2':             
             return self.strategy2(computer)
         else:
             print ('No strategy chosen defaulting to random')
@@ -297,59 +261,33 @@ class tictactoe:  # Main Class
         self.setBoard()
         print(self.board)
 
-        count=0
-        computer = 'X' if self.firstTurn() == 1 else 'O' # randomly get first player
+        count = 0
+        player =  self.firstTurn() # randomly get first player
         while True:
-            print (computer, "turn")
+            print (self.players[player], "turn")
+            strategy = strategyIndexX if player == 1 else strategyIndexO
+            i, j = self.take_turn(strategy, player)
+            self.placement(i, j, player)
             count += 1
-            if computer == 'X':
-                i, j = self.take_turn(strategyIndexX, computer)
-            else:
-                i, j = self.take_turn(strategyIndexO, computer)
-            if i==-1 and j==-1:
-                i, j= self.free_space() 
-                
-            self.placement(i, j, computer)
-        # while True:
-        #     print(computer, "turn")
-        #     count+=1
-        #     if computer == 'X':
-        #         if strategyIndexX == 1:
-        #             i, j = self.take_turn(self.free_space())
-        #         elif strategyIndexX==2:
-        #             i, j = self.take_turn(self.strategy1())
-        #         else: 
-        #             i,j= self.take_turn(self.strategy2('X'))
-        #     else:
-        #         if strategyIndexO == 1:
-        #             i, j = self.take_turn(self.free_space())
-        #         elif strategyIndexO==2:
-        #             i, j = self.take_turn(self.strategy1())
-        #         else: 
-        #             i,j= self.take_turn(self.strategy2('X'))
-        #     self.placement(i, j, computer)
-            
             self.showBoard()
 
             # You can add this check only if number of turns is greater than 5 here (add a counter)
             # Check if the current player wins
-            if count>4:
-                if self.winner(computer):
-                    print("Player", computer, "wins the game!")
-                    return computer
+            if count > 4:
+                if self.winner(player):
+                    print("Player", self.players[player], "wins the game!")
+                    return self.players[player]
                     break
             
-            # if you have a counter here you don't need to check the board is full but break after 9 turns
-            # Check if the board is full
-            if count==9:
+            # Board full
+            if count == 9:
                 print("Draw match!")
                 break
 
             # Change players
-            computer = self.swap_player_turn(computer)
+            player = self.swap_player_turn(player)
 
         print()
-        
         self.showBoard()
 
 
@@ -368,10 +306,7 @@ winsO=0
 
 t = tictactoe()
 for i in range(1,N):
-    # 3 = 'smart_2'
-    # 2 = 'smart_1'
-    # 1 = 'random'
-    computer=t.startgame(3,2) # first position fives strategy of X, second position gives strategy of O
+    computer=t.startgame('random','smart1') # first position fives strategy of X, second position gives strategy of O
     if computer:
         if computer=='X':
             winsX+=1
