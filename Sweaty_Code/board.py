@@ -1,5 +1,3 @@
-# We put CFR Coded Algorithm here!
-
 import pandas as pd  # noqa F401
 import numpy as np  # noqa F401
 import string  # noqa F401
