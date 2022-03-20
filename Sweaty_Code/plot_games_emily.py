@@ -1,4 +1,4 @@
-import pandas as pd  # noqa F401   
+import pandas as pd  # noqa F401 
 import numpy as np  # noqa F401
 import string  # noqa F401
 import random  # noqa F401
@@ -349,6 +349,8 @@ class tictactoe:  # Main Class
 t = tictactoe()
 t.startgame(3,1)
 
+
+#%% 
 #next task: make an even better strategy, even closer to how a human in playing
 
 #next task: make x play with random startegy and O with strategy1 and plot the sample of wins
@@ -373,8 +375,13 @@ for i in range(1,N):
     a[i]=winsX
     b[i]=winsO
 
+#%%
+
+
+
 from matplotlib import pyplot as plt
 import matplotlib as mpl
+
 mpl.rcParams['axes.spines.right'] = False
 mpl.rcParams['axes.spines.top'] = False
     
@@ -384,3 +391,6 @@ plt.xlabel('Number of wins')
 plt.ylabel('Number of games played')
 plt.title('X-smart strategy, O- random strategy')
 plt.legend()
+
+
+# %%

@@ -298,7 +298,7 @@ t.startgame(3,1)
 
 #next task: make x play with random startegy and O with strategy1 and plot the sample of wins
 
-N = 1000
+N = 10
 a=np.zeros(N)
 b=np.zeros(N)
 winsX=0
