@@ -346,11 +346,10 @@ class tictactoe:  # Main Class
         Plyr1=np.random.choice([-1, 1])
         Plyr2=Plyr1*-1
         
+        player=1
         
         count = 0
-        
-
-        player =  self.firstTurn() # randomly get first player
+        # randomly get first player
 
 
         while True:
@@ -369,18 +368,16 @@ class tictactoe:  # Main Class
             if Show is True:
                 print (self.players[player], "turn")
                 self.showBoard()
+                print("")
+                time.sleep(0.5)
 
             # You can add this check only if number of turns is greater than 5 here (add a counter)
             # Check if the current player wins
             if count > 4:
                 if self.winner(player):
-                    if Plyr1 ==1:
-                        Strategy=strategyP1
-                    else:
-                        Strategy=strategyP2
                     if Winner is True:
-                        print("Player", self.players[player], " ", Strategy ,"wins the game!")
-                    return Strategy
+                        print("Player", self.players[player], " ", strategy ,"wins the game!")
+                    return strategy
                     break
             
             # Board full
@@ -437,19 +434,18 @@ class Node:
                 self.strategy[arow][acol] = 0
             normalisingSum += self.strategy[arow][acol]
 
-
-
         for a in available_actions:
             arow=a[0]
             acol=a[1]
 
             if normalisingSum > 0:
-                self.strategy /= normalisingSum
+                self.strategy[arow][acol] /= normalisingSum
             else:
                 self.strategy[arow][acol] = 1 / len(available_actions)
             self.strategySum[arow][acol] += self.strategy[arow][acol]*ReachProb
 
         return self.strategy
+
 
 
 
@@ -478,14 +474,12 @@ def CounterFactualisedRegret(Game, Depth, Plyr1Prob, Plyr2Prob):
         TurnNum=1
         TurnPiece="X"
         RelevantProb=Plyr1Prob
-        Player1Coeff=1
-        Player2Coeff=0
+
     else:
         TurnNum=-1
         TurnPiece="O"
         RelevantProb=Plyr2Prob
-        Player1Coeff=0
-        Player2Coeff=1
+
     # Is there a winner on the board?
 
 
@@ -573,11 +567,31 @@ def CounterFactualisedRegret(Game, Depth, Plyr1Prob, Plyr2Prob):
 
         Depth2 = Depth + 1
 
+
+        #print(ChildVals)
+
+        #print(ChildProb)
+
+        #print("")
+
+        #time.sleep(2)
+
+
+
+
     # Recursion Time :) - Go another node deeper by recalling the same function. (this will continue until we find a winner down this node route and we can extract a value for this child val (reach probability adjusted summation of grandchildren.))
     # This will be negative version  of current "regret frame" - as moves which are good for X are bad for Y
 
-        ChildVals[irow][icol] = -CounterFactualisedRegret(DeeperGrid,  Depth2, Plyr1Prob + Player1Coeff*ChildProb[irow][icol], Plyr2Prob +Player2Coeff*ChildProb[irow][icol])
+        if TurnNum==1:
+            ChildVals[irow][icol] = -CounterFactualisedRegret(DeeperGrid,  Depth2, Plyr1Prob*ChildProb[irow][icol], Plyr2Prob)
+        else: 
+            ChildVals[irow][icol] = -CounterFactualisedRegret(DeeperGrid,  Depth2, Plyr1Prob, Plyr2Prob*ChildProb[irow][icol])
+
+
+
         NodeVal = NodeVal + ChildVals[irow][icol] * ChildProb[irow][icol]
+
+        #print(NodeVal)
 
     # Find Child Regret (=Vi*RPi-Sum(Vj*RPj)) After iteration above:
     for i in Responses:
@@ -585,10 +599,12 @@ def CounterFactualisedRegret(Game, Depth, Plyr1Prob, Plyr2Prob):
 
             irow=i[0]
             icol=i[1]
-            Regret = ChildVals[irow][icol]*ChildProb[irow][icol] -NodeVal
+            Regret = ChildVals[irow][icol] -NodeVal
             # Probability of action occuring is prob of previous move:
 
             NODE.regretSum[irow][icol] += RelevantProb*Regret
+
+
 
 
 
@@ -601,11 +617,33 @@ def CounterFactualisedRegret(Game, Depth, Plyr1Prob, Plyr2Prob):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def train(iterations,Data=True):
-
-
-
-
 
 
     Game=tictactoe()
@@ -665,7 +703,6 @@ def train(iterations,Data=True):
         print(i, "iter completed")
 
     return [KnownArrangements1, KnownArrangements10, KnownArrangements20, KnownArrangements30 ,KnownArrangements40, KnownArrangements50, KnownArrangements60, KnownArrangements70, KnownArrangements80, KnownArrangements90, KnownArrangements100]
-#return [WinRate, DrawRate, CFRData, RandomData]
 
 
 ####################################################################################################################################################################################
@@ -736,5 +773,212 @@ print("Not Loss Rate ", x/N)
 
 
 #%%
+
+
+
+Game=tictactoe()
+Game.placement(2,2,1)
+#Game.showBoard()
+Game.placement(1,1,-1)
+#Game.showBoard()
+Game.placement(0,1,1)
+#Game.showBoard()
+Game.placement(1,2,-1)
+Game.showBoard()
+
+Game.placement(Game.CFR_Strat(KnownArrangements,1)[0],Game.CFR_Strat(KnownArrangements,1)[1],1)
+#Game.showBoard()
+
+
+
+
+
+
+# %%
+
+
+print(KnownArrangements["Turn: " + "X" + " Arrangement: " + "---------"].strategy)
+Game=tictactoe()
+print((Game.CFR_Strat(KnownArrangements,1)[0],Game.CFR_Strat(KnownArrangements,1)[1],1))
+
+#print(a50["Turn: " + "O" + " Arrangement: " + "XOX------"].strategy-a10["Turn: " + "O" + " Arrangement: " + "XOX------"].strategy)
+# %%
+
+Game=tictactoe()
+Game.startgame("CFR","random",KnownArrangements)
+# %%
+
+Xarr=[1,10,20,30,40,50,60,70,80,90,100]
+WinArr=[]
+DrawOrWinArr=[]
+
+
+for NodeList in [a1,a10,a20,a30,a40,a50,a60,a70,a80,a90,a100]:
+    Strategy1="CFR"
+    Strategy2="random"
+
+
+    N = 10000
+    a=np.zeros(N)
+    b=np.zeros(N)
+    winsStrat1=0
+    winsStrat2=0
+
+    Game=tictactoe()
+    for i in range(1,N):
+        computer=Game.startgame(Strategy1,Strategy2,NodeList,Show=False,Winner=False) # first position gives strategy of X, second position gives strategy of O
+        if computer:
+            if computer==Strategy1:
+                winsStrat1+=1
+            else:
+                winsStrat2+=1
+        a[i]=winsStrat1
+        b[i]=winsStrat2
+
+    WinArr.append(max(a)/N)
+    DrawOrWinArr.append(1-max(b)/N)
+
+
+""" 
+    from matplotlib import pyplot as plt
+    import matplotlib as mpl
+    mpl.rcParams['axes.spines.right'] = False
+    mpl.rcParams['axes.spines.top'] = False
+        
+    plt.plot(range(N), a, label=Strategy1+ " wins")
+    plt.plot(range(N), b, label=Strategy2+ " wins")
+    plt.ylabel('Number of wins')
+    plt.xlabel('Number of games played')
+    plt.title(Strategy1 + ' strategy vs ' + Strategy2 + ' strategy')
+    plt.legend()
+    plt.show()
+ """
+    
+
+from matplotlib import pyplot as plt
+import matplotlib as mpl
+mpl.rcParams['axes.spines.right'] = False
+mpl.rcParams['axes.spines.top'] = False
+
+#%%
+
+plt.figure(dpi=2000)
+plt.plot(Xarr,WinArr,"-x",label='Win Percentage')
+plt.plot(Xarr,DrawOrWinArr,"-x",label='Draw or Win Percentage')
+
+plt.xlabel("Number of CFR Iterations")
+plt.ylabel("Percent of Total Games Played")
+plt.title(Strategy1 + ' strategy vs ' + Strategy2 + ' strategy',fontsize=20)
+plt.legend()
+plt.show()
+
+
+
+
+# %%
+print(a1["Turn: " + "X" + " Arrangement: " + "XOXO-----"].strategy)
+print(a10["Turn: " + "X" + " Arrangement: " + "XOXO-----"].strategy)
+# %%
+
+plt.figure(dpi=2000)
+
+import numpy as np
+import seaborn as sns
+import matplotlib.pylab as plt
+
+x=a100["Turn: " + "X" + " Arrangement: " + "---------"].strategy
+
+ax = sns.heatmap(x,vmin=0, linewidth=0.5,cmap="seismic",annot=True)
+#ax.color_palette("coolwarm", as_cmap=seismic)
+plt.title("Utility of Starting Points in Tic Tac Toe",fontsize=20)
+plt.show()
+# %%
+
+
+
+Strategy1="CFR"
+Strategy2="random"
+
+
+N = 10000
+a=np.zeros(N)
+RandomPerformance=np.zeros(N)
+winsStrat1=0
+winsStrat2=0
+
+Game=tictactoe()
+for i in range(1,N):
+    computer=Game.startgame(Strategy1,Strategy2,KnownArrangements,Show=False,Winner=False) # first position gives strategy of X, second position gives strategy of O
+    if computer:
+        if computer==Strategy1:
+            winsStrat1+=1
+        else:
+            winsStrat2+=1
+    a[i]=winsStrat1
+    RandomPerformance[i]=winsStrat2
+
+#%%
+
+
+Strategy1="CFR"
+Strategy2="smart1"
+
+
+N = 10000
+a=np.zeros(N)
+Smart1=np.zeros(N)
+winsStrat1=0
+winsStrat2=0
+
+Game=tictactoe()
+for i in range(1,N):
+    computer=Game.startgame(Strategy1,Strategy2,KnownArrangements,Show=False,Winner=False) # first position gives strategy of X, second position gives strategy of O
+    if computer:
+        if computer==Strategy1:
+            winsStrat1+=1
+        else:
+            winsStrat2+=1
+    a[i]=winsStrat1
+    Smart1[i]=winsStrat2
+#%%
+
+
+
+Strategy1="CFR"
+Strategy2="CFR"
+
+
+N = 10000
+a=np.zeros(N)
+CFR=np.zeros(N)
+winsStrat1=0
+winsStrat2=0
+
+Game=tictactoe()
+for i in range(1,N):
+    computer=Game.startgame(Strategy1,Strategy2,KnownArrangements,Show=False,Winner=False) # first position gives strategy of X, second position gives strategy of O
+    if computer:
+        if computer==Strategy1:
+            winsStrat1+=1
+        else:
+            winsStrat2+=1
+    a[i]=winsStrat1
+    CFR[i]=winsStrat2
+
+# %%
+plt.figure(dpi=2000)
+plt.plot(np.linspace(0,9999,10000),RandomPerformance,label="Smart Non-Learning Strategy")
+plt.plot(np.linspace(0,9999,10000),Smart1,label="Random Strategy")
+plt.plot(np.linspace(0,9999,10000),CFR, label="CFR Strategy")
+plt.legend()
+plt.xlabel("Number of Games")
+plt.ylabel("Number of Wins Against CFR")
+plt.title("All Strategies vs CFR Strategy", fontsize=20)
+plt.show()
+# %%
+
+
+print(max(a)/N)
+print(1-max(Smart1)/N)
 
 # %%
