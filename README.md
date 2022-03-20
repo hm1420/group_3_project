@@ -1,6 +1,6 @@
 # group_3_project
 
-Rianna
+Rianna: 
 Create a tic tac toe board and add a piece using a random move
 
 #Ana
