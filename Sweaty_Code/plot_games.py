@@ -72,9 +72,9 @@ class tictactoe:  # Main Class
         #so that the next move will be in the 3rd free space (for either player)
 
         # checking on columns
-        if player*2 in np.sum(self.board, axis=0):
+        if np.abs(player)*2 in np.abs(np.sum(self.board, axis=0)):
             # get column(s) with 2 
-            row_idy = np.argwhere(np.sum(self.board, axis=0) == player*2 ).squeeze()
+            row_idy = np.argwhere(np.abs(np.sum(self.board, axis=0) )== np.abs(player)*2 ).squeeze()
             # sample column in the case there is more than 2
             idy = int([np.random.choice(row_idy) if row_idy.shape != () else row_idy][0])
             # get the row axis
@@ -82,9 +82,9 @@ class tictactoe:  # Main Class
             return idx, idy
 
         # checking on rows
-        if player*2 in np.sum(self.board, axis=1):
+        if np.abs(player)*2 in np.abs(np.sum(self.board, axis=1)):
             # get row(s) with 2
-            row_idx = np.argwhere(np.sum(self.board, axis=1) == player*2).squeeze()
+            row_idx = np.argwhere(np.abs(np.sum(self.board, axis=1) )== np.abs(player)*2).squeeze()
             # sample row in the case there is more than 2
             idx = int([np.random.choice(row_idx) if row_idx.shape != () else row_idx][0])
             # add the final piece for winning move
@@ -92,19 +92,23 @@ class tictactoe:  # Main Class
             return idx, idy
 
         # checking on diagonal1
-        if player*2 == np.trace(self.board):
+        if np.abs(player)*2 == np.abs(np.trace(self.board)):
             # get diagonal(s) with 2
             if self.board[0][0] == 0:
                 idx, idy = 0, 0
-            else:
+            elif self.board[2][2]==0:
                 idx, idy = 2, 2
+            else:
+                idx, idy=1,1
             return idx, idy
 
         # checking on diagonal2
-        if player*2 == np.trace(np.rot90(self.board)):
+        if np.abs(player)*2 ==np.abs( np.trace(np.rot90(self.board))):
             # get diagonal(s) with 2
             if self.board[0][2] == 0:
                 idx, idy = 0, 2
+            elif self.board[1][1]==0:
+                idx, idy =1,1     
             else:
                 idx, idy = 2, 0
             return idx, idy
@@ -120,7 +124,7 @@ class tictactoe:  # Main Class
         counter=9
         for i in range(3):
             for j in range(3):
-                if self.board[i][j]=='-':
+                if self.board[i][j]==0:
                     counter-=1
         #choosing first move to be in a corner
         if counter==0:
@@ -134,7 +138,7 @@ class tictactoe:  # Main Class
         elif counter==1:
             for i in range(3):
                 for j in range(3):
-                    if self.board[i][j]!='-':
+                    if self.board[i][j]!=0:
                         break
             
             while True:
@@ -151,97 +155,75 @@ class tictactoe:  # Main Class
         #so that the next move will be in the 3rd free space (for both players)
         #prefers to occupy a spot that wins rather one that stops the opponent from winning
         #checking rows
-        a=-1
-        b=-1
-        for i in range(3):
-            if self.board[i][0]== self.board[i][1] and self.board[i][2]=='-':
-                if self.board[i][0]==player:
-                    return i, 2
-                else:
-                    a=i
-                    b=2
-            else:
-                if self.board[i][0]==self.board[i][2] and self.board[i][1]=='-':
-                    if self.board[i][0]== player:
-                        return i, 1
-                    else:
-                        a=i
-                        b=1
-                else:
-                    if self.board[i][1]==self.board[i][2] and self.board[i][0]=='-':
-                        if self.board[i][1]==player:
-                            return i, 0
-                        else:
-                            a=i
-                            b=0
-                    
-        #checking for columns
-        for i in range(3):
-            if self.board[0][i]== self.board[1][i] and self.board[2][i]=='-':
-                if self.board[0][i]==player:
-                    return 2,i
-                else:
-                    a=2
-                    b=i
-            else:
-                if self.board[0][i]==self.board[2][i] and self.board[1][i]=='-':
-                    if self.board[0][i]==player:
-                        return 1,i
-                    else:
-                        a=1
-                        b=i
-                else:
-                    if self.board[1][i]==self.board[2][i] and self.board[0][i]=='-':
-                        if self.board[1][i]==player:
-                            return 0,i
-                        else:
-                            a=0
-                            b=i
-        #checking for diagonals
-        if self.board[0][0]==self.board[1][1] and self.board[2][2]=='-':
-            if self.board[0][0]==player:
-                return 2,2
-            else:
-                a=2
-                b=2
-        else:
-            if self.board[0][0]==self.board[2][2] and self.board[1][1]=='-':
-                if self.board[0][0]==player:
-                    return 1,1
-                else:
-                    a=1
-                    b=1
-            else:
-                if self.board[1][1]==self.board[2][2] and self.board[0][0]=='-':
-                    if self.board[1][1]==player:
-                        return 0,0
-                    else:
-                        a=0
-                        b=0
-        if self.board[0][2]==self.board[1][1] and self.board[2][0]=='-':
-            if self.board[0][2]==player:
-                return 2,0
-            else:
-                a=2
-                b=0
-        else:
-            if self.board[0][2]==self.board[0][2] and self.board[1][1]=='-':
-                if self.board[0][2]==player:
-                    return 1,1
-                else:
-                    a=1
-                    b=1
-            else:
-                if self.board[1][1]==self.board[2][0] and self.board[0][2]=='-':
-                    if self.board[1][1]==player:
-                        return 0,2
-                    else:
-                        a=0
-                        b=2
+        a=2
+        b=2
         
-        if a>=0 and b>=0:
-            return a, b
-        return -1, -1
+        # checking on columns
+        if np.abs(player)*2 in np.abs( np.sum(self.board, axis=0)):
+            # get column(s) with 2 
+            row_idy = np.argwhere(np.abs(np.sum(self.board, axis=0)) ==np.abs( player)*2 ).squeeze()
+            # sample column in the case there is more than 2
+            idy = int([np.random.choice(row_idy) if row_idy.shape != () else row_idy][0])
+            # get the row axis
+            idx = np.argwhere(self.board[:,idy] == 0)[0][0]
+            s=0
+            for i in range(2):
+                s+=self.board[i][idy]
+            if s!=player*2:
+                a,b=idx, idy
+            else:
+                return idx, idy
+
+        # checking on rows
+        if np.abs(player)*2 in np.abs(np.sum(self.board, axis=1)):
+            # get row(s) with 2
+            row_idx = np.argwhere(np.abs(np.sum(self.board, axis=1)) == np.abs(player)*2).squeeze()
+            # sample row in the case there is more than 2
+            idx = int([np.random.choice(row_idx) if row_idx.shape != () else row_idx][0])
+            # add the final piece for winning move
+            idy = np.argwhere(self.board[idx,:] == 0)[0][0]
+            s=0
+            for i in range(2):
+                s+=self.board[idx][i]
+            if s!=player*2:
+                a,b=idx, idy
+            else:    
+                return idx, idy
+
+        # checking on diagonal1
+        if np.abs(player)*2 == np.abs(np.trace(self.board)):
+            
+            # get diagonal(s) with 2
+            if self.board[0][0] == 0:
+                idx, idy = 0, 0
+            elif self.board[2][2]==0:
+                idx, idy = 2, 2
+            else:
+                idx, idy=1,1
+            if np.trace(self.board)!=player*2:
+                a,b=idx,idy
+            else:
+                return idx, idy
+
+        # checking on diagonal2
+        if np.abs(player)*2 == np.abs(np.trace(np.rot90(self.board))):
+            # get diagonal(s) with 2
+            if self.board[0][2] == 0:
+                idx, idy = 0, 2
+            elif self.board[1][1]==0:
+                idx,idy=1,1
+            else:
+                idx, idy = 2, 0
+            if player*2!= np.trace(np.rot90(self.board)):
+                a,b=idx, idy
+            else:
+                return idx, idy
+        
+        if a<2 and b<2:
+            return a,b
+
+        idx, idy = self.free_space()
+        return idx, idy
     
             
     def take_turn(self, strategy, computer):
@@ -298,7 +280,7 @@ t.startgame(3,1)
 
 #next task: make x play with random startegy and O with strategy1 and plot the sample of wins
 
-N = 10
+N = 1000
 a=np.zeros(N)
 b=np.zeros(N)
 winsX=0
@@ -306,7 +288,7 @@ winsO=0
 
 t = tictactoe()
 for i in range(1,N):
-    computer=t.startgame('random','smart1') # first position fives strategy of X, second position gives strategy of O
+    computer=t.startgame('smart2','smart1') # first position fives strategy of X, second position gives strategy of O
     if computer:
         if computer=='X':
             winsX+=1
