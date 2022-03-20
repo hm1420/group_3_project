@@ -1,4 +1,4 @@
-# group_3_project
+# Group 3 Project
 
 ## Rianna: 
 Created a tic tac toe board and add a piece using a random move (board.py).
