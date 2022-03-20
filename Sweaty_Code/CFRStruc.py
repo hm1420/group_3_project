@@ -1,5 +1,57 @@
 import numpy as np
-from numpy import NaN
+
+# Begin by initialising a constant. I decided to create a constant NUM_ACTIONS
+# like the Google doc since it should make the code easier to understand as
+# it's read.
+
+# DEFINITIONS
+
+NUM_ACTIONS = 9
+
+# Next we move on the get_strategy function. I more or less adapted the code
+# in the video and also used the code in the Google doc to help, but regardless
+# , both the video and Google doc very clearly adapted the pseudocode from
+# the research paper.
+
+# Unlike the rock-paper-scissors implementation in the video, the number of
+# actions we have changes as the game goes on so I created a function to help
+# determine these.
+
+
+class Node:
+
+    def __init__(self):
+        self.regretSum = np.zeroes(NUM_ACTIONS)
+        self.strategy = np.zeroes(NUM_ACTIONS)
+        self.strategySum = np.zeroes(NUM_ACTIONS)
+
+    def get_strategy(self):
+
+        # GET CURRENT MIXED STRATEGY THROUGH REGRET-MATCHING
+
+        # The code for this function is more or less identical to the one in
+        # the Google doc but if you take a look at the page 5, section 2.4 in
+        # the paper it is literally just adapting that code to Python.
+
+        # Basically the paper, the Google doc and the guy in the video all
+        # adopt the below code.
+
+        available_actions = get_available_actions(self)
+        normalisingSum = 0
+
+        for a in available_actions:
+            self.strategy[a] = self.regretSum[a] if self.regretSum[a] > 0 \
+                                                    else 0
+            self.normalisingSum += self.strategy[a]
+
+        for a in available_actions:
+            if normalisingSum > 0:
+                self.strategy /= normalisingSum
+            else:
+                self.strategy[a] = 1 / len(available_actions)
+            self.strategySum[a] += self.strategy[a]
+
+        return self.strategy
 
 def CHECKWINNER(grid):
     return 0
@@ -42,18 +94,16 @@ def GETPROB(Node, ReachProb, grid):
 
 
 
-
-
-
-
-### CFR Function
-
-
 #Node Dictionary:
 Depth=0
 AllNodes={}
 
 ## Inputs: Depth, Node-Child "Reach Probabilities", Our Grid
+
+
+
+
+### CFR Function
 
 def CounterFactualisedRegret(grid,Depth, Plyr1Prob, Plyr2Prob):
 

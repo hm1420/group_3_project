@@ -291,6 +291,9 @@ class tictactoe:  # Main Class
             return a, b
         return -1, -1
 
+
+
+
     def CFR_Strat(self,KnownArrangements,player):
         if player==1:
             Piece="X"
@@ -300,60 +303,97 @@ class tictactoe:  # Main Class
         Arrangement = "Turn: " + Piece + " Arrangement: " +Game.BoardForCFR()
 
         CurrentNode=KnownArrangements[Arrangement]
-        row=CurrentNode.strategy.argmax()[0]
-        col=CurrentNode.strategy.argmax()[0]
-        return row, col
 
+        Scores=CurrentNode.strategy
+
+        Options=self.ListMoves()
+
+        AllowedScores=[]
+
+
+        for i in Options:
+
+            AllowedScores.append(Scores[i[0],i[1]])
+        
+        
+        Biggest=np.argmax(AllowedScores)
+        TheOne=Options[Biggest]
+        
+        
+        return TheOne[0],TheOne[1]
 
 
 
 ##########################################################################################
     
             
-    def take_turn(self, strategy, computer):
+    def take_turn(self, strategy, computer, KnownArrangements=0):
         if strategy == 'random':               
             return self.free_space()
         elif strategy == 'smart1':             
             return self.strategy1(computer)
         elif strategy == 'smart2':             
             return self.strategy2(computer)
+        elif strategy == 'CFR':
+            return self.CFR_Strat(KnownArrangements,computer)
         else:
             print ('No strategy chosen defaulting to random')
             return self.free_space()
 
-    def startgame(self, strategyIndexX, strategyIndexO):  # Call other functions in here to run the game.
+    def startgame(self, strategyP1, strategyP2, KnownArrangements=0,Show=True,Winner=True):  # Call other functions in here to run the game.
         self.__init__() # added this so you can continually initiate game
 
-        print(self.board)
-
+        Plyr1=np.random.choice([-1, 1])
+        Plyr2=Plyr1*-1
+        
+        
         count = 0
+        
+
         player =  self.firstTurn() # randomly get first player
+
+
         while True:
-            print (self.players[player], "turn")
-            strategy = strategyIndexX if player == 1 else strategyIndexO
-            i, j = self.take_turn(strategy, player)
+
+            
+            strategy = strategyP1 if player == Plyr1 else strategyP2
+
+
+            i, j = self.take_turn(strategy, player,KnownArrangements)
+
+
+
             self.placement(i, j, player)
             count += 1
-            self.showBoard()
+
+            if Show is True:
+                print (self.players[player], "turn")
+                self.showBoard()
 
             # You can add this check only if number of turns is greater than 5 here (add a counter)
             # Check if the current player wins
             if count > 4:
                 if self.winner(player):
-                    print("Player", self.players[player], "wins the game!")
-                    return self.players[player]
+                    if Plyr1 ==1:
+                        Strategy=strategyP1
+                    else:
+                        Strategy=strategyP2
+                    if Winner is True:
+                        print("Player", self.players[player], " ", Strategy ,"wins the game!")
+                    return Strategy
                     break
             
             # Board full
             if count == 9:
-                print("Draw match!")
+                if Winner is True:
+                    print("Draw match!")
                 break
 
             # Change players
             player = self.swap_player_turn(player)
-
-        print()
-        self.showBoard()
+        if Show is True:   
+            print()
+            self.showBoard()
 
 
 ####################################################################################################################################################################################
@@ -560,16 +600,72 @@ def CounterFactualisedRegret(Game, Depth, Plyr1Prob, Plyr2Prob):
 
 
 
-def train(iterations):
+
+def train(iterations,Data=True):
+
+
+
+
+
 
     Game=tictactoe()
 
     util = 0
 
     for i in range(0,iterations):
+        j=i+1
+
+        
         util += CounterFactualisedRegret(Game, 0, 1, 1)
 
+
+        if round(j-1)==0:
+            KnownArrangements1=copy.deepcopy(KnownArrangements)
+
+        if round(j-10)==0:
+            KnownArrangements10=copy.deepcopy(KnownArrangements)
+
+        if round(j-20)==0:
+            KnownArrangements20=copy.deepcopy(KnownArrangements)
+
+
+        if round(j-30)==0:
+            KnownArrangements30=copy.deepcopy(KnownArrangements)
+
+        if round(j-40)==0:
+            KnownArrangements40=copy.deepcopy(KnownArrangements)
+
+        if round(j-50)==0:
+            KnownArrangements50=copy.deepcopy(KnownArrangements)
+
+
+        if round(j-60)==0:
+            KnownArrangements60=copy.deepcopy(KnownArrangements)
+
+
+        if round(j-70)==0:
+            KnownArrangements70=copy.deepcopy(KnownArrangements)
+
+
+        if round(j-80)==0:
+            KnownArrangements80=copy.deepcopy(KnownArrangements)
+
+
+        if round(j-90)==0:
+            KnownArrangements90=copy.deepcopy(KnownArrangements)
+
+
+        if round(j-100)==0:
+            KnownArrangements100=copy.deepcopy(KnownArrangements)
+
+    
+
+                
+
         print(i, "iter completed")
+
+    return [KnownArrangements1, KnownArrangements10, KnownArrangements20, KnownArrangements30 ,KnownArrangements40, KnownArrangements50, KnownArrangements60, KnownArrangements70, KnownArrangements80, KnownArrangements90, KnownArrangements100]
+#return [WinRate, DrawRate, CFRData, RandomData]
 
 
 ####################################################################################################################################################################################
@@ -578,49 +674,67 @@ def train(iterations):
 
 
 print("Start Time =", datetime.now().strftime("%H:%M:%S"))
-train(2)
+a1,a10,a20,a30,a40,a50,a60,a70,a80,a90,a100=train(100)
 print("End Time =", datetime.now().strftime("%H:%M:%S"))
 
 #%%
 
 ####################################################################################################################################################################################
 
+Game=tictactoe()
+Game.startgame("CFR","random",KnownArrangements,Show=True)
+
+
+# %%
+
+Strategy1="CFR"
+Strategy2="random"
+
+
+N = 10000
+a=np.zeros(N)
+b=np.zeros(N)
+winsStrat1=0
+winsStrat2=0
 
 Game=tictactoe()
+for i in range(1,N):
+    computer=Game.startgame(Strategy1,Strategy2,KnownArrangements,Show=False,Winner=False) # first position gives strategy of X, second position gives strategy of O
+    if computer:
+        if computer==Strategy1:
+            winsStrat1+=1
+        else:
+            winsStrat2+=1
+    a[i]=winsStrat1
+    b[i]=winsStrat2
 
-Game.showBoard()
-Game.placement(0,0,1)
-Game.showBoard()
-Game.placement(1,0,-1)
-Game.showBoard()
-Game.placement(2,2,1)
-Game.showBoard()
-Game.placement(2,0,-1)
-Game.showBoard()
+from matplotlib import pyplot as plt
+import matplotlib as mpl
+mpl.rcParams['axes.spines.right'] = False
+mpl.rcParams['axes.spines.top'] = False
+    
+plt.plot(range(N), a, label=Strategy1+ " wins")
+plt.plot(range(N), b, label=Strategy2+ " wins")
+plt.ylabel('Number of wins')
+plt.xlabel('Number of games played')
+plt.title(Strategy1 + ' strategy vs ' + Strategy2 + ' strategy')
+plt.legend()
+plt.show()
 
+# %%
+z=0
+x=0
+for i in range(1, len(a)):
+    if a[i]==a[i-1]:
+        z+=1
+    if b[i]==b[i-1]:
+        x+=1
 
+print("Win Rate ", 1-z/N)
+print("Not Loss Rate ", x/N)
 
 
 
 #%%
-
-
-Piece="X"
-Arrangement = "Turn: " + Piece + " Arrangement: " +Game.BoardForCFR()
-CurrentNode=KnownArrangements[Arrangement]
-row=CurrentNode.strategy.argmax()
-print(CurrentNode.strategy)
-col=np.unravel_index(CurrentNode.strategy.argmax(), CurrentNode.strategy.shape)
-print(col)
-#Game.placement(KnownArrangements[Game.BoardForCFR].strategy.argmax()[0],KnownArrangements[Game.BoardForCFR].strategy.argmax()[1],-1)
-#Game.showBoard()
-
-# %%
-#print(KnownArrangements[Game.BoardForCFR()])
-print(Game.BoardForCFR())
-#print(KnownArrangements)
-
-
-# %%
 
 # %%
